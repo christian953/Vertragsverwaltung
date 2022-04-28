@@ -10,6 +10,8 @@ class Hauptname_frame(wx.Frame):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Hauptmenu", pos=wx.DefaultPosition,
                           size=wx.Size(770, 300), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.orderBy = 0
+        self.tableContents = []
+        self.selection = []
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetFont(wx.Font(12, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial Black"))
 
@@ -95,24 +97,27 @@ class Hauptname_frame(wx.Frame):
         self.Layout()
 
         self.Centre(wx.BOTH)
-
+        self.fillGrid()
         self.del_button.Bind(wx.EVT_BUTTON, self.onDel)
         self.speicher_button.Bind(wx.EVT_BUTTON, self.onSave)
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
 
     def fillGrid(self):
         values = sqldb.getValues(self.orderBy)
-        print(len(values))
         for row in range(0, 8 if len(values) > 8 else len(values)):
+            self.tableContents.append(values)
             for cell in range(0, 8):
                 self.main_grid.SetCellValue(row, cell, values[row][cell])
 
     def onOrder(self, event):
+        if event.GetCol() == -1:
+            self.selection.append(event.GetRow())
+            self.main_grid.SetRowAttr(event.GetRow(), wx.grid.GridCellAttr())
         self.orderBy = event.GetCol()
         self.fillGrid()
 
     def onDel(self, event):
-        pass
+        print(self.main_grid.GetSelectedCells())
 
     def onSave(self, event):
         pass
