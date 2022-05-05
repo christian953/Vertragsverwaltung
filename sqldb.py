@@ -3,8 +3,10 @@ from sqlobject import *
 sqlhub.processConnection = connectionForURI('sqlite:Vertragswarner.db')
 
 colnames = [
-"kategorie", "bezeichnung", "start_datum", "enddatum", "kuendigungsdatum", "webseite", "nutzername", "passwort"
+    "kategorie", "bezeichnung", "start_datum", "enddatum", "kuendigungsdatum", "webseite", "nutzername", "passwort"
 ]
+
+
 # Kategorie, Bezeichnung, Start-, End- und spätestem Kündigungsdatum, Webseite, Nutzername und Passwort.
 class Vertragswarner(SQLObject):
     kategorie = StringCol()
@@ -17,8 +19,8 @@ class Vertragswarner(SQLObject):
     passwort = StringCol()
     iv = StringCol()
 
-#Vertragswarner(kategorie="a", bezeichnung="b", start_datum="2002-10-10", enddatum="2002-10-10", kuendigungsdatum="2002-10-10",
-#               webseite="a", nutzername="b", passwort="c", iv="d")
+Vertragswarner(kategorie="b", bezeichnung="b", start_datum="2002-10-10", enddatum="2002-10-10", kuendigungsdatum="2002-10-10",
+               webseite="a", nutzername="a", passwort="c", iv="d")
 
 Vertragswarner.createTable(ifNotExists=True)
 
@@ -40,3 +42,8 @@ def getValues(orderBy):
         cells.append(values[row].id)
         rows.append(cells)
     return rows
+
+
+def remove(_id):
+    print(_id)
+    Vertragswarner.delete(_id)

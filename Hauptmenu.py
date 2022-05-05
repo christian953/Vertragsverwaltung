@@ -53,7 +53,7 @@ class Hauptname_frame(wx.Frame):
         # Cell Defaults
         self.main_grid.SetDefaultCellAlignment(wx.ALIGN_LEFT, wx.ALIGN_TOP)
         self.main_grid.SetFont(
-            wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL,
+            wx.Font(2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL,
                     False, wx.EmptyString))
 
         bSizer7.Add(self.main_grid, 0, wx.ALL, 5)
@@ -102,22 +102,49 @@ class Hauptname_frame(wx.Frame):
         self.speicher_button.Bind(wx.EVT_BUTTON, self.onSave)
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
 
-    def fillGrid(self):
-        values = sqldb.getValues(self.orderBy)
-        for row in range(0, 8 if len(values) > 8 else len(values)):
-            self.tableContents.append(values)
+    def clearGrid(self):
+        for row in range(0, 8):
             for cell in range(0, 8):
-                self.main_grid.SetCellValue(row, cell, values[row][cell])
+                self.main_grid.SetCellValue(row, cell, "")
+
+    def fillGrid(self):
+        self.clearGrid()
+        self.tableContents = sqldb.getValues(self.orderBy)
+        for row in range(0, 8 if len(self.tableContents) > 8 else len(self.tableContents)):
+            for cell in range(0, 8):
+                self.main_grid.SetCellValue(row, cell, self.tableContents[row][cell])
 
     def onOrder(self, event):
         if event.GetCol() == -1:
-            self.selection.append(event.GetRow())
-            self.main_grid.SetRowAttr(event.GetRow(), wx.grid.GridCellAttr())
+            print("0")
+            selectedRow = event.GetRow()
+            if selectedRow not in self.selection:
+                print("1")
+                self.selection.append(event.GetRow())
+                for i in range(0, 8):
+                    self.main_grid.SetCellTextColour(selectedRow, i, wx.RED)
+            else:
+                print("2")
+                self.selection.remove(selectedRow)
+                for i in range(0, 8):
+                    self.main_grid.SetCellTextColour(selectedRow, i, wx.BLACK)
+
         self.orderBy = event.GetCol()
         self.fillGrid()
 
     def onDel(self, event):
-        print(self.main_grid.GetSelectedCells())
+        for row in self.selection:
+            rowid = int(self.tableContents[row][8])
+            sqldb.remove(rowid)
+        self.fillGrid()
+        self.resetSelection()
+
+    def resetSelection(self):
+        print("reset")
+        for row in self.selection:
+            for i in range(0, 8):
+                self.main_grid.SetCellTextColour(row, i, wx.BLACK)
+        self.selection = []
 
     def onSave(self, event):
         pass
