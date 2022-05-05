@@ -27,12 +27,3 @@ def decrypt(encrypted_pw ,iv):
     decrypted_pw = deciphered_bytes.decode('utf-8')
 
     return decrypted_pw
-
-
-# lel = encrypt("Michi")
-# print(lel)
-#
-# lel = decrypt(lel[0], lel[1])
-# print(lel)
-
-# test

@@ -19,7 +19,9 @@ class Vertragswarner(SQLObject):
     passwort = StringCol()
     iv = StringCol()
 
-Vertragswarner(kategorie="b", bezeichnung="b", start_datum="2002-10-10", enddatum="2002-10-10", kuendigungsdatum="2002-10-10",
+
+Vertragswarner(kategorie="b", bezeichnung="b", start_datum="2002-10-10", enddatum="2002-10-10",
+               kuendigungsdatum="2002-10-10",
                webseite="a", nutzername="a", passwort="c", iv="d")
 
 Vertragswarner.createTable(ifNotExists=True)
@@ -42,6 +44,18 @@ def getValues(orderBy):
         cells.append(values[row].id)
         rows.append(cells)
     return rows
+
+
+def update(id, values):
+    vetrag = Vertragswarner.get(id)
+    vetrag.kategorie = values[0]
+    vetrag.bezeichnung = values[1]
+    vetrag.start_datum = values[2]
+    vetrag.enddatum = values[3]
+    vetrag.kuendigungsdatum = values[4]
+    vetrag.webseite = values[5]
+    vetrag.nutzername = values[6]
+    vetrag.passwort = values[7]
 
 
 def remove(_id):

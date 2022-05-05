@@ -8,7 +8,7 @@ class Hauptname_frame(wx.Frame):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Hauptmenu", pos=wx.DefaultPosition,
-                          size=wx.Size(770, 300), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          size=wx.Size(1000, 350), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.orderBy = 0
         self.tableContents = []
         self.selection = []
@@ -37,13 +37,20 @@ class Hauptname_frame(wx.Frame):
         self.main_grid.SetColLabelValue(7, "Passwort")
 
         # Columns
+        self.main_grid.SetColSize(2, 120)
+        self.main_grid.SetColSize(3, 120)
+        self.main_grid.SetColSize(4, 150)
         self.main_grid.EnableDragColMove(False)
         self.main_grid.EnableDragColSize(True)
         self.main_grid.SetColLabelSize(30)
         self.main_grid.SetColLabelAlignment(wx.ALIGN_CENTER, wx.ALIGN_CENTER)
 
         # Rows
-        self.main_grid.AutoSizeRows()
+        self.main_grid.SetRowSize(0, 22)
+        self.main_grid.SetRowSize(1, 22)
+        self.main_grid.SetRowSize(2, 22)
+        self.main_grid.SetRowSize(3, 22)
+        self.main_grid.SetRowSize(4, 22)
         self.main_grid.EnableDragRowSize(True)
         self.main_grid.SetRowLabelSize(80)
         self.main_grid.SetRowLabelAlignment(wx.ALIGN_CENTER, wx.ALIGN_CENTER)
@@ -113,6 +120,11 @@ class Hauptname_frame(wx.Frame):
         for row in range(0, 8 if len(self.tableContents) > 8 else len(self.tableContents)):
             for cell in range(0, 8):
                 self.main_grid.SetCellValue(row, cell, self.tableContents[row][cell])
+                self.main_grid.SetReadOnly(row,cell,False)
+        if len(self.tableContents) < 8:
+            for row in range(len(self.tableContents), 8):
+                for cell in range(0,8):
+                    self.main_grid.SetReadOnly(row,cell,True)
 
     def onOrder(self, event):
         if event.GetCol() == -1:
@@ -121,15 +133,14 @@ class Hauptname_frame(wx.Frame):
             if selectedRow not in self.selection:
                 print("1")
                 self.selection.append(event.GetRow())
-                for i in range(0, 8):
-                    self.main_grid.SetCellTextColour(selectedRow, i, wx.RED)
+                self.setRowColour(selectedRow, wx.BLUE)
             else:
                 print("2")
                 self.selection.remove(selectedRow)
-                for i in range(0, 8):
-                    self.main_grid.SetCellTextColour(selectedRow, i, wx.BLACK)
-
-        self.orderBy = event.GetCol()
+                self.setRowColour(selectedRow, wx.BLACK)
+        else:
+            self.orderBy = event.GetCol()
+            self.resetSelection()
         self.fillGrid()
 
     def onDel(self, event):
@@ -140,14 +151,27 @@ class Hauptname_frame(wx.Frame):
         self.resetSelection()
 
     def resetSelection(self):
-        print("reset")
         for row in self.selection:
-            for i in range(0, 8):
-                self.main_grid.SetCellTextColour(row, i, wx.BLACK)
+            self.setRowColour(row, wx.BLACK)
         self.selection = []
 
     def onSave(self, event):
-        pass
+        print(self.getCurrenValues())
+        for row in range(0, len(self.tableContents) if len(self.tableContents) < 8 else 8):
+            sqldb.update(self.tableContents[row][8], self.getCurrenValues()[row])
+
+    def getCurrenValues(self):
+        values = []
+        for row in range(0, 8):
+            cells = []
+            for cell in range(0, 8):
+                cells.append(self.main_grid.GetCellValue(row, cell))
+            values.append(cells)
+        return values
+
+    def setRowColour(self, row, colour):
+        for i in range(0, 8):
+            self.main_grid.SetCellTextColour(row, i, colour)
 
     def __del__(self):
         pass
