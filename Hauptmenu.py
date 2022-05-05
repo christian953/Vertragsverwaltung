@@ -2,6 +2,7 @@ import wx
 import wx.xrc
 import wx.grid
 import sqldb
+import MasterPasswort
 
 
 class Hauptname_frame(wx.Frame):
@@ -14,6 +15,19 @@ class Hauptname_frame(wx.Frame):
         self.selection = []
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetFont(wx.Font(12, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False, "Arial Black"))
+
+        self.settings_button = wx.MenuBar(0)
+        self.m_menu5 = wx.Menu()
+        self.datetime = wx.MenuItem(self.m_menu5, wx.ID_ANY, u"Frist einstellen", wx.EmptyString, wx.ITEM_NORMAL)
+        self.m_menu5.Append(self.datetime)
+
+        self.masterpasswort_button = wx.MenuItem(self.m_menu5, wx.ID_ANY, u"Masterpasswort ändern", wx.EmptyString,
+                                                 wx.ITEM_NORMAL)
+        self.m_menu5.Append(self.masterpasswort_button)
+
+        self.settings_button.Append(self.m_menu5, u"Einstellungen")
+
+        self.SetMenuBar(self.settings_button)
 
         bSizer7 = wx.BoxSizer(wx.VERTICAL)
 
@@ -59,44 +73,19 @@ class Hauptname_frame(wx.Frame):
 
         # Cell Defaults
         self.main_grid.SetDefaultCellAlignment(wx.ALIGN_LEFT, wx.ALIGN_TOP)
-        self.main_grid.SetFont(
-            wx.Font(2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL,
-                    False, wx.EmptyString))
-
         bSizer7.Add(self.main_grid, 0, wx.ALL, 5)
 
-        bSizer8 = wx.BoxSizer(wx.VERTICAL)
+        bSizer8 = wx.BoxSizer(wx.HORIZONTAL)
 
-        bSizer10 = wx.BoxSizer(wx.HORIZONTAL)
+        self.speicher_button = wx.Button(self, wx.ID_ANY, u"Speichern", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer8.Add(self.speicher_button, 0, wx.ALL, 5)
 
-        self.del_button = wx.Button(self, 1, u"Löschen", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer10.Add(self.del_button, 0, wx.ALIGN_RIGHT | wx.ALL, 5)
+        bSizer9 = wx.BoxSizer(wx.VERTICAL)
 
-        self.speicher_button = wx.Button(self, 2, u"Speichern", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer10.Add(self.speicher_button, 0, wx.ALIGN_RIGHT | wx.ALL, 5)
+        self.del_button = wx.Button(self, wx.ID_ANY, u"Löschen", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer9.Add(self.del_button, 0, wx.ALL, 5)
 
-        bSizer11 = wx.BoxSizer(wx.HORIZONTAL)
-
-        bSizer14 = wx.BoxSizer(wx.VERTICAL)
-
-        self.masterpw_txt = wx.StaticText(self, wx.ID_ANY, u"Neues-Masterpasswort:", wx.DefaultPosition, wx.DefaultSize,
-                                          0)
-        # self.masterpw_txt.Wrap(-1)
-
-        bSizer14.Add(self.masterpw_txt, 0, wx.ALIGN_RIGHT | wx.ALL, 5)
-
-        bSizer11.Add(bSizer14, 1, wx.EXPAND, 5)
-
-        bSizer13 = wx.BoxSizer(wx.VERTICAL)
-
-        self.m_textCtrl3 = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer13.Add(self.m_textCtrl3, 0, wx.ALIGN_RIGHT | wx.ALL | wx.EXPAND, 5)
-
-        bSizer11.Add(bSizer13, 1, wx.EXPAND, 5)
-
-        bSizer10.Add(bSizer11, 1, wx.EXPAND, 5)
-
-        bSizer8.Add(bSizer10, 1, wx.EXPAND, 5)
+        bSizer8.Add(bSizer9, 1, wx.EXPAND, 5)
 
         bSizer7.Add(bSizer8, 1, wx.EXPAND, 5)
 
@@ -104,7 +93,9 @@ class Hauptname_frame(wx.Frame):
         self.Layout()
 
         self.Centre(wx.BOTH)
+
         self.fillGrid()
+        self.masterpasswort_button.Bind(wx.EVT_BUTTON, self.showMasterPasswort)
         self.del_button.Bind(wx.EVT_BUTTON, self.onDel)
         self.speicher_button.Bind(wx.EVT_BUTTON, self.onSave)
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
@@ -172,6 +163,11 @@ class Hauptname_frame(wx.Frame):
     def setRowColour(self, row, colour):
         for i in range(0, 8):
             self.main_grid.SetCellTextColour(row, i, colour)
+
+    def showMasterPasswort(self,event):
+        masterPasswortpanel = MasterPasswort.MasterPasswordFrame
+        pass
+        masterPasswortpanel.Show()
 
     def __del__(self):
         pass

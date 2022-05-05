@@ -1,4 +1,5 @@
 from sqlobject import *
+import encrypt_decrypt
 
 sqlhub.processConnection = connectionForURI('sqlite:Vertragswarner.db')
 
@@ -61,3 +62,10 @@ def update(id, values):
 def remove(_id):
     print(_id)
     Vertragswarner.delete(_id)
+
+
+def add(values):
+    passwort = encrypt_decrypt.encrypt(values[6])
+    Vertragswarner(kategorie=values[0], bezeichnung=values[1], start_datum=values[2], enddatum=values[3],
+                   kuendigungsdatum=values[3],
+                   webseite=values[4], nutzername=values[5], passwort=passwort[0], iv=passwort[1])
