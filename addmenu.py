@@ -1,12 +1,13 @@
 import wx
 import wx.xrc
 import sqldb
+import datetime
 
 
 class AddFrame(wx.Frame):
 
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Daten hinzufügen", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(506, 359), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -152,10 +153,18 @@ class AddFrame(wx.Frame):
         self.add_button.Bind(wx.EVT_BUTTON, self.onSubmit)
 
     def onSubmit(self, event):
-        values = [self.m_textCtrl6.GetValue(), self.m_textCtrl7.GetValue(), self.m_textCtrl8, self.m_textCtrl9,
-                  self.m_textCtrl10, self.m_textCtrl11,
-                  self.m_textCtrl12, self.m_textCtrl13]
-        sqldb.add(values)
+        values = [self.m_textCtrl6.GetValue(), self.m_textCtrl7.GetValue(), self.m_textCtrl8.GetValue(),
+                  self.m_textCtrl9.GetValue(),
+                  self.m_textCtrl10.GetValue(), self.m_textCtrl11.GetValue(),
+                  self.m_textCtrl12.GetValue(), self.m_textCtrl13.GetValue()]
+        try:
+            datetime.datetime.strptime(self.m_textCtrl8.GetValue(), "%Y-%m-%d")
+            datetime.datetime.strptime(self.m_textCtrl9.GetValue(), "%Y-%m-%d")
+            datetime.datetime.strptime(self.m_textCtrl10.GetValue(), "%Y-%m-%d")
+            sqldb.add(values)
+        except ValueError:
+            #self.wrongFormatWarning()
+            self.Close()
 
     def __del__(self):
         pass

@@ -1,6 +1,8 @@
 import wx
 import wx.xrc
 import wx.grid
+
+import addmenu
 import sqldb
 import MasterPasswort
 
@@ -8,9 +10,10 @@ import MasterPasswort
 class Hauptname_frame(wx.Frame):
 
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Hauptmenu", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(1000, 350), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.orderBy = 0
+        self.masterPassword = 123
         self.tableContents = []
         self.selection = []
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -21,9 +24,7 @@ class Hauptname_frame(wx.Frame):
         self.datetime = wx.MenuItem(self.m_menu5, wx.ID_ANY, u"Frist einstellen", wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu5.Append(self.datetime)
 
-        self.masterpasswort_button = wx.MenuItem(self.m_menu5, wx.ID_ANY, u"Masterpasswort ändern", wx.EmptyString,
-                                                 wx.ITEM_NORMAL)
-        self.m_menu5.Append(self.masterpasswort_button)
+        self.passwordButton = self.m_menu5.Append(wx.ID_ANY, u"Masterpasswort ändern", u"Masterpasswort ändern")
 
         self.settings_button.Append(self.m_menu5, u"Einstellungen")
 
@@ -80,10 +81,17 @@ class Hauptname_frame(wx.Frame):
         self.speicher_button = wx.Button(self, wx.ID_ANY, u"Speichern", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer8.Add(self.speicher_button, 0, wx.ALL, 5)
 
-        bSizer9 = wx.BoxSizer(wx.VERTICAL)
+        bSizer9 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.del_button = wx.Button(self, wx.ID_ANY, u"Löschen", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer9.Add(self.del_button, 0, wx.ALL, 5)
+
+        bSizer10 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.add_button = wx.Button(self, wx.ID_ANY, u"Hinzufügen", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer10.Add(self.add_button, 0, wx.ALL, 5)
+
+        bSizer9.Add(bSizer10, 1, wx.EXPAND, 5)
 
         bSizer8.Add(bSizer9, 1, wx.EXPAND, 5)
 
@@ -95,9 +103,11 @@ class Hauptname_frame(wx.Frame):
         self.Centre(wx.BOTH)
 
         self.fillGrid()
-        self.masterpasswort_button.Bind(wx.EVT_BUTTON, self.showMasterPasswort)
+        self.Bind(wx.EVT_MENU, self.showMasterPasswort, self.passwordButton)
+        self.Bind(wx.EVT_MENU, self.setDeadLine, self.datetime)
         self.del_button.Bind(wx.EVT_BUTTON, self.onDel)
         self.speicher_button.Bind(wx.EVT_BUTTON, self.onSave)
+        self.add_button.Bind(wx.EVT_BUTTON, self.showAddPanel)
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
 
     def clearGrid(self):
@@ -111,11 +121,11 @@ class Hauptname_frame(wx.Frame):
         for row in range(0, 8 if len(self.tableContents) > 8 else len(self.tableContents)):
             for cell in range(0, 8):
                 self.main_grid.SetCellValue(row, cell, self.tableContents[row][cell])
-                self.main_grid.SetReadOnly(row,cell,False)
+                self.main_grid.SetReadOnly(row, cell, False)
         if len(self.tableContents) < 8:
             for row in range(len(self.tableContents), 8):
-                for cell in range(0,8):
-                    self.main_grid.SetReadOnly(row,cell,True)
+                for cell in range(0, 8):
+                    self.main_grid.SetReadOnly(row, cell, True)
 
     def onOrder(self, event):
         if event.GetCol() == -1:
@@ -133,6 +143,13 @@ class Hauptname_frame(wx.Frame):
             self.orderBy = event.GetCol()
             self.resetSelection()
         self.fillGrid()
+
+    def setDeadLine(self, event):
+        pass
+
+    def showAddPanel(self, event):
+        self.addPanel = addmenu.AddFrame(None)
+        self.addPanel.Show()
 
     def onDel(self, event):
         for row in self.selection:
@@ -164,10 +181,10 @@ class Hauptname_frame(wx.Frame):
         for i in range(0, 8):
             self.main_grid.SetCellTextColour(row, i, colour)
 
-    def showMasterPasswort(self,event):
-        masterPasswortpanel = MasterPasswort.MasterPasswordFrame
-        pass
+    def showMasterPasswort(self, event):
+        masterPasswortpanel = MasterPasswort.MasterPasswordFrame(None, self.masterPassword)
         masterPasswortpanel.Show()
+        masterPasswortpanel.Raise()
 
     def __del__(self):
         pass
