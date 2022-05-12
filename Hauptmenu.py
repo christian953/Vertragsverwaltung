@@ -3,6 +3,7 @@ import wx.xrc
 import wx.grid
 
 import Fristfeld
+import MasterpasswortChange
 import addmenu
 import sqldb
 import MasterPasswort
@@ -115,15 +116,16 @@ class Hauptname_frame(wx.Frame):
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
 
     def clearGrid(self):
+        """Empties the entire grid. Christian"""
         for row in range(0, 8):
             for cell in range(0, 8):
                 self.main_grid.SetCellValue(row, cell, "")
 
     def fillGrid(self):
+        """Fills the grid with the first 8 rows from the database sorted by last clicked label. Christian"""
         self.clearGrid()
         self.tableContents = sqldb.getValues(self.orderBy)
         for row in range(0, 8 if len(self.tableContents) > 8 else len(self.tableContents)):
-            print(self.tableContents[row])
             for cell in range(0, 8):
                 self.main_grid.SetCellValue(row, cell, self.tableContents[row][cell])
                 self.main_grid.SetReadOnly(row, cell, False)
@@ -131,44 +133,46 @@ class Hauptname_frame(wx.Frame):
             if self.highlight:
                 if (datetime.datetime.strptime(self.tableContents[row][4],
                                                "%Y-%m-%d") - datetime.datetime.today()) < datetime.timedelta(
-                        days=self.deadLine):
-                    print(datetime.datetime.strptime(self.tableContents[row][4],
-                                               "%Y-%m-%d") - datetime.datetime.today())
-                    print("DEADLINE", self.deadLine)
+                    days=self.deadLine):
                     self.setRowColour(row, wx.RED)
             if datetime.datetime.strptime(self.tableContents[row][4], "%Y-%m-%d") < datetime.datetime.today():
                 self.setRowColour(row, wx.LIGHT_GREY)
         if len(self.tableContents) < 8:
+            # Sets empty rows to readonly so rows without database equivalent can't be edited
             for row in range(len(self.tableContents), 8):
                 for cell in range(0, 8):
                     self.main_grid.SetReadOnly(row, cell, True)
 
     def onOrder(self, event):
-        if event.GetCol() == -1:
-            print("0")
+        """Reorders the grid depending on clicked label or adds row to selection. Christian"""
+        if event.GetCol() == -1:  # Checks if number label is clicked for selecting a row or colname label is clicked
+            # for sorting
             selectedRow = event.GetRow()
             if selectedRow not in self.selection:
-                print("1")
                 self.selection.append(event.GetRow())
+                self.fillGrid()
                 self.setRowColour(selectedRow, wx.BLUE)
+                return
             else:
-                print("2")
                 self.selection.remove(selectedRow)
                 self.setRowColour(selectedRow, wx.BLACK)
         else:
             self.orderBy = event.GetCol()
-            self.resetSelection()
-        self.fillGrid()
+            self.resetSelection()  # Resets selection so selection and view doesn't go out of sync
+        self.fillGrid()  # Calls fill grid to update values in grid to new ordering
 
     def setDeadLine(self, event):
+        """Opens window used for setting the deadline and toggling highlighting. Christian"""
         deadLinepanel = Fristfeld.DeadlineFrame(self)
         deadLinepanel.Show()
 
     def showAddPanel(self, event):
+        """Shows panel used for adding new rows to database. Christian"""
         self.addPanel = addmenu.AddFrame(None)
         self.addPanel.Show()
 
     def onDel(self, event):
+        """Deletes selected rows. Christian"""
         for row in self.selection:
             rowid = int(self.tableContents[row][8])
             sqldb.remove(rowid)
@@ -176,16 +180,18 @@ class Hauptname_frame(wx.Frame):
         self.resetSelection()
 
     def resetSelection(self):
+        """Resets list of selected rows and sets them back to default colour. Christian"""
         for row in self.selection:
             self.setRowColour(row, wx.BLACK)
         self.selection = []
 
     def onSave(self, event):
-        print(self.getCurrenValues())
+        """Saves changes made in grid to databse. Christian"""
         for row in range(0, len(self.tableContents) if len(self.tableContents) < 8 else 8):
             sqldb.update(self.tableContents[row][8], self.getCurrenValues()[row])
 
     def getCurrenValues(self):
+        """Returns values currently displayed in Grid as list of lists. Christian"""
         values = []
         for row in range(0, 8):
             cells = []
@@ -195,11 +201,13 @@ class Hauptname_frame(wx.Frame):
         return values
 
     def setRowColour(self, row, colour):
+        """Changes font colour of entire row in grid. Christian"""
         for i in range(0, 8):
             self.main_grid.SetCellTextColour(row, i, colour)
 
     def showMasterPasswort(self, event):
-        masterPasswortpanel = MasterPasswort.MasterPasswordFrame(None, self.masterPassword)
+        """Shows panel used for changing masterpassword"""
+        masterPasswortpanel = MasterpasswortChange.FrameChangempw(self)
         masterPasswortpanel.Show()
         masterPasswortpanel.Raise()
 

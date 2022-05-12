@@ -6,7 +6,7 @@ sqlhub.processConnection = connectionForURI('sqlite:Vertragswarner.db')
 
 colnames = [
     "kategorie", "bezeichnung", "start_datum", "enddatum", "kuendigungsdatum", "webseite", "nutzername", "passwort"
-]
+]   # List of internal colnames of database used for sorting
 
 
 # Kategorie, Bezeichnung, Start-, End- und spätestem Kündigungsdatum, Webseite, Nutzername und Passwort.
@@ -22,14 +22,11 @@ class Vertragswarner(SQLObject):
     iv = StringCol()
 
 
-Vertragswarner(kategorie="b", bezeichnung="b", start_datum="2002-10-10", enddatum="2002-10-10",
-               kuendigungsdatum="2002-10-10",
-               webseite="a", nutzername="a", passwort="c", iv="d")
-
 Vertragswarner.createTable(ifNotExists=True)
 
 
 def getValues(orderBy):
+    """Returns first 8 resuslts of database as list of lists. Christian"""
     values = Vertragswarner.select(orderBy=colnames[orderBy])
     rows = []
     values = list(values)[:8]
@@ -49,6 +46,7 @@ def getValues(orderBy):
 
 
 def update(id, values):
+    """Updates row in database to passed values. Christian"""
     vetrag = Vertragswarner.get(id)
     vetrag.kategorie = values[0]
     vetrag.bezeichnung = values[1]
@@ -61,13 +59,15 @@ def update(id, values):
 
 
 def remove(_id):
+    """Deletes row in database by ID. Christian"""
     print(_id)
     Vertragswarner.delete(_id)
 
 
 def add(values):
+    """Adds a new row to the Database. Christian"""
     passwort = encrypt_decrypt.encrypt(values[6])
     print(values)
     Vertragswarner(kategorie=values[0], bezeichnung=values[1], start_datum=values[2], enddatum=values[3],
-                   kuendigungsdatum=values[3],
-                   webseite=values[4], nutzername=values[5], passwort=str(passwort[0]), iv=str(passwort[1]))
+                   kuendigungsdatum=values[4],
+                   webseite=values[5], nutzername=values[6], passwort=str(passwort[0]), iv=str(passwort[1]))

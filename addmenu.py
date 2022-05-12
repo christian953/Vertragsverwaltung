@@ -155,6 +155,7 @@ class AddFrame(wx.Frame):
         self.add_button.Bind(wx.EVT_BUTTON, self.onSubmit)
 
     def onSubmit(self, event):
+        """Submits entered values to database. Christian"""
         values = [self.m_textCtrl6.GetValue(), self.m_textCtrl7.GetValue(), self.m_textCtrl8.GetValue(),
                   self.m_textCtrl9.GetValue(),
                   self.m_textCtrl10.GetValue(), self.m_textCtrl11.GetValue(),
@@ -164,10 +165,12 @@ class AddFrame(wx.Frame):
             datetime.datetime.strptime(self.m_textCtrl9.GetValue(), "%Y-%m-%d")
             datetime.datetime.strptime(self.m_textCtrl10.GetValue(), "%Y-%m-%d")
             sqldb.add(values)
+            self.Close()
         except ValueError:
             self.wrongFormatWarning()
 
     def wrongFormatWarning(self):
+        """Shows warning that entered date is in wrong format. Christian"""
         errorfenster.Dialogerror(None).Show()
 
     def __del__(self):

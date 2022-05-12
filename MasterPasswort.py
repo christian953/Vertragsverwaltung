@@ -54,6 +54,7 @@ class MasterPasswordFrame(wx.Frame):
         pass
 
     def onSubmit(self, event):
+        """Checks if entered masterpassord is correct. Christian"""
         submittedPassword = self.mpasswort_ctr.GetValue()
         if submittedPassword != self.masterpassword:
             self.ueberschrift.SetForegroundColour(wx.RED)

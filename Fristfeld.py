@@ -61,13 +61,17 @@ class DeadlineFrame(wx.Frame):
         self.Centre(wx.BOTH)
 
     def setDeadline(self, event):
-        self.parent.deadline = int(self.textdays.GetValue())
-        print(self.textdays.GetValue())
-        self.parent.fillGrid()
+        """Sets the deadLine of Parent to entered number of days. Christian"""
+        try:
+            self.parent.deadLine = int(self.textdays.GetValue())
+            self.parent.fillGrid()  # Called to update highlighting according to new deadline
+        except ValueError:
+            self.m_staticText2.SetLabel("Ungültige Eingabe")
 
     def toggleHighlighting(self, event):
+        """Toggles highlighting in parent. Christian"""
         self.parent.highlight = not self.parent.highlight
-        self.parent.fillGrid()
+        self.parent.fillGrid()  # Called to update highlighting according to new deadline
 
     def __del__(self):
         pass
