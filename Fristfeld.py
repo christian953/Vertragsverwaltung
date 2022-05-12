@@ -9,7 +9,7 @@ class DeadlineFrame(wx.Frame):
                           size=wx.Size(427, 212), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
-
+        self.parent = parent
         bSizer1 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText1 = wx.StaticText(self, wx.ID_ANY, u"Frist einstellen", wx.DefaultPosition, wx.DefaultSize, 0)
@@ -35,6 +35,7 @@ class DeadlineFrame(wx.Frame):
         bSizer2.Add(self.m_staticText2, 0, wx.ALL, 5)
 
         self.textdays = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(200, -1), 0)
+        self.textdays.SetValue(str(parent.deadLine))
         bSizer2.Add(self.textdays, 0, wx.ALL, 5)
 
         bSizer8 = wx.BoxSizer(wx.HORIZONTAL)
@@ -42,6 +43,7 @@ class DeadlineFrame(wx.Frame):
         bSizer10 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.checkbox = wx.CheckBox(self, wx.ID_ANY, u"Aktivieren/Deaktivieren", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.checkbox.SetValue(parent.highlight)
         bSizer10.Add(self.checkbox, 0, wx.ALIGN_BOTTOM | wx.ALL, 5)
 
         bSizer8.Add(bSizer10, 1, wx.EXPAND, 5)
@@ -54,8 +56,18 @@ class DeadlineFrame(wx.Frame):
 
         self.SetSizer(bSizer1)
         self.Layout()
-
+        self.textdays.Bind(wx.EVT_TEXT, self.setDeadline)
+        self.checkbox.Bind(wx.EVT_CHECKBOX, self.toggleHighlighting)
         self.Centre(wx.BOTH)
+
+    def setDeadline(self, event):
+        self.parent.deadline = int(self.textdays.GetValue())
+        print(self.textdays.GetValue())
+        self.parent.fillGrid()
+
+    def toggleHighlighting(self, event):
+        self.parent.highlight = not self.parent.highlight
+        self.parent.fillGrid()
 
     def __del__(self):
         pass

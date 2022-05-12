@@ -1,5 +1,7 @@
 import wx
 import wx.xrc
+
+import errorfenster
 import sqldb
 import datetime
 
@@ -163,8 +165,10 @@ class AddFrame(wx.Frame):
             datetime.datetime.strptime(self.m_textCtrl10.GetValue(), "%Y-%m-%d")
             sqldb.add(values)
         except ValueError:
-            #self.wrongFormatWarning()
-            self.Close()
+            self.wrongFormatWarning()
+
+    def wrongFormatWarning(self):
+        errorfenster.Dialogerror(None).Show()
 
     def __del__(self):
         pass

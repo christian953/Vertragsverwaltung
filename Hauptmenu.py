@@ -2,9 +2,11 @@ import wx
 import wx.xrc
 import wx.grid
 
+import Fristfeld
 import addmenu
 import sqldb
 import MasterPasswort
+import datetime
 
 
 class Hauptname_frame(wx.Frame):
@@ -13,6 +15,8 @@ class Hauptname_frame(wx.Frame):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(1000, 350), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.orderBy = 0
+        self.highlight = True
+        self.deadLine = 40
         self.masterPassword = 123
         self.tableContents = []
         self.selection = []
@@ -119,9 +123,21 @@ class Hauptname_frame(wx.Frame):
         self.clearGrid()
         self.tableContents = sqldb.getValues(self.orderBy)
         for row in range(0, 8 if len(self.tableContents) > 8 else len(self.tableContents)):
+            print(self.tableContents[row])
             for cell in range(0, 8):
                 self.main_grid.SetCellValue(row, cell, self.tableContents[row][cell])
                 self.main_grid.SetReadOnly(row, cell, False)
+            self.setRowColour(row, wx.BLACK)
+            if self.highlight:
+                if (datetime.datetime.strptime(self.tableContents[row][4],
+                                               "%Y-%m-%d") - datetime.datetime.today()) < datetime.timedelta(
+                        days=self.deadLine):
+                    print(datetime.datetime.strptime(self.tableContents[row][4],
+                                               "%Y-%m-%d") - datetime.datetime.today())
+                    print("DEADLINE", self.deadLine)
+                    self.setRowColour(row, wx.RED)
+            if datetime.datetime.strptime(self.tableContents[row][4], "%Y-%m-%d") < datetime.datetime.today():
+                self.setRowColour(row, wx.LIGHT_GREY)
         if len(self.tableContents) < 8:
             for row in range(len(self.tableContents), 8):
                 for cell in range(0, 8):
@@ -145,7 +161,8 @@ class Hauptname_frame(wx.Frame):
         self.fillGrid()
 
     def setDeadLine(self, event):
-        pass
+        deadLinepanel = Fristfeld.DeadlineFrame(self)
+        deadLinepanel.Show()
 
     def showAddPanel(self, event):
         self.addPanel = addmenu.AddFrame(None)
