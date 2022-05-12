@@ -7,9 +7,8 @@ class FrameChangempw(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(600, 311), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
-
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
-
+        self.parent = parent
         bSizer1 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText1 = wx.StaticText(self, wx.ID_ANY, u"Masterpasswort", wx.Point(-1, -1), wx.DefaultSize, 0)
@@ -93,6 +92,7 @@ class FrameChangempw(wx.Frame):
         self.textnowpasswordinvalid.Hide()
 
         bSizer13.Add(self.textnowpasswordinvalid, 0, wx.ALL, 5)
+        self.textnowpasswordinvalid.Hide()
 
         self.textnewpasswordinvalid = wx.StaticText(self, wx.ID_ANY,
                                                     u"Ihr neues Masterpasswort, das Sie eingegeben haben, stimmt nicht überein!",
@@ -105,6 +105,7 @@ class FrameChangempw(wx.Frame):
         self.textnewpasswordinvalid.SetForegroundColour(wx.Colour(255, 0, 0))
 
         bSizer13.Add(self.textnewpasswordinvalid, 0, wx.ALL, 5)
+        self.textnewpasswordinvalid.Hide()
 
         bSizer7.Add(bSizer13, 1, wx.EXPAND, 5)
 
@@ -133,8 +134,19 @@ class FrameChangempw(wx.Frame):
 
         self.SetSizer(bSizer1)
         self.Layout()
+        self.m_button2.Bind(wx.EVT_BUTTON, self.onSubmit)
 
         self.Centre(wx.BOTH)
+
+
+    def onSubmit(self, event):
+        if self.textpassword.GetValue() != self.parent.masterPassword:
+            self.textnowpasswordinvalid.Show()
+        elif self.textNewpassword.GetValue() != self.textnewpassword2.GetValue():
+            self.textnewpasswordinvalid.Show()
+        else:
+            self.parent.masterPassword = self.textNewpassword.GetValue()
+            self.Close()
 
     def __del__(self):
         pass

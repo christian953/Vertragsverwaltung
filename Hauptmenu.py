@@ -12,13 +12,13 @@ import datetime
 
 class Hauptname_frame(wx.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, masterPassword):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(1000, 350), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.orderBy = 0
         self.highlight = True
         self.deadLine = 40
-        self.masterPassword = 123
+        self.masterPassword = masterPassword
         self.tableContents = []
         self.selection = []
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
@@ -114,6 +114,7 @@ class Hauptname_frame(wx.Frame):
         self.speicher_button.Bind(wx.EVT_BUTTON, self.onSave)
         self.add_button.Bind(wx.EVT_BUTTON, self.showAddPanel)
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
+        self.Bind(wx.EVT_SET_FOCUS, self.fillGrid)
 
     def clearGrid(self):
         """Empties the entire grid. Christian"""
@@ -133,7 +134,7 @@ class Hauptname_frame(wx.Frame):
             if self.highlight:
                 if (datetime.datetime.strptime(self.tableContents[row][4],
                                                "%Y-%m-%d") - datetime.datetime.today()) < datetime.timedelta(
-                    days=self.deadLine):
+                    days=self.deadLine) and row not in self.selection:
                     self.setRowColour(row, wx.RED)
             if datetime.datetime.strptime(self.tableContents[row][4], "%Y-%m-%d") < datetime.datetime.today():
                 self.setRowColour(row, wx.LIGHT_GREY)
@@ -180,13 +181,13 @@ class Hauptname_frame(wx.Frame):
         self.resetSelection()
 
     def resetSelection(self):
-        """Resets list of selected rows and sets them back to default colour. Christian"""
+        """Empties list containing selected rows and sets them back to default colour. Christian"""
         for row in self.selection:
             self.setRowColour(row, wx.BLACK)
         self.selection = []
 
     def onSave(self, event):
-        """Saves changes made in grid to databse. Christian"""
+        """Saves changes made in grid to database. Christian"""
         for row in range(0, len(self.tableContents) if len(self.tableContents) < 8 else 8):
             sqldb.update(self.tableContents[row][8], self.getCurrenValues()[row])
 
@@ -206,10 +207,11 @@ class Hauptname_frame(wx.Frame):
             self.main_grid.SetCellTextColour(row, i, colour)
 
     def showMasterPasswort(self, event):
-        """Shows panel used for changing masterpassword"""
+        """Shows panel used for changing masterpassword. Christian"""
         masterPasswortpanel = MasterpasswortChange.FrameChangempw(self)
         masterPasswortpanel.Show()
         masterPasswortpanel.Raise()
+
 
     def __del__(self):
         pass

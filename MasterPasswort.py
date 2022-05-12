@@ -1,5 +1,6 @@
 import wx
 import wx.xrc
+import Hauptmenu
 
 
 class MasterPasswordFrame(wx.Frame):
@@ -61,4 +62,6 @@ class MasterPasswordFrame(wx.Frame):
             self.ueberschrift.SetLabel(
                 "Das Passwort war nicht korrekt.")
         else:
-            pass
+            hauptmenuFrame = Hauptmenu.Hauptname_frame(None, self.masterpassword)
+            hauptmenuFrame.Show()
+            self.Hide()
