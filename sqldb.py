@@ -6,7 +6,7 @@ sqlhub.processConnection = connectionForURI('sqlite:Vertragswarner.db')
 
 colnames = [
     "kategorie", "bezeichnung", "start_datum", "enddatum", "kuendigungsdatum", "webseite", "nutzername", "passwort"
-]   # List of internal colnames of database used for sorting
+]  # List of internal colnames of database used for sorting
 
 
 # Kategorie, Bezeichnung, Start-, End- und spätestem Kündigungsdatum, Webseite, Nutzername und Passwort.
@@ -22,7 +22,20 @@ class Vertragswarner(SQLObject):
     iv = StringCol()
 
 
+class Masterpassword(SQLObject):
+    password = BLOBCol()
+    iv = BLOBCol()
+
+
+def setDefaulPassword():
+    password = encrypt_decrypt.encrypt("123")
+    Masterpassword(password=password[0], iv=password[0])
+
+
 Vertragswarner.createTable(ifNotExists=True)
+Masterpassword.createTable(ifNotExists=True)
+if len(list(Masterpassword.select())) == 0:
+    setDefaulPassword()
 
 
 def getValues(orderBy):
@@ -71,3 +84,16 @@ def add(values):
     Vertragswarner(kategorie=values[0], bezeichnung=values[1], start_datum=values[2], enddatum=values[3],
                    kuendigungsdatum=values[4],
                    webseite=values[5], nutzername=values[6], passwort=str(passwort[0]), iv=str(passwort[1]))
+
+
+def updatePassword(password):
+    password = encrypt_decrypt.encrypt(password)
+    pwdb = Masterpassword.get(1)
+    pwdb.password = password[0]
+    pwdb.iv = password[1]
+
+
+def getPassword():
+    password = Masterpassword.get(1)
+    password = encrypt_decrypt.decrypt(bytes(password.password), password.iv)
+    return password

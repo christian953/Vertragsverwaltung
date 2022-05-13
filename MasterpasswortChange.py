@@ -1,6 +1,8 @@
 import wx
 import wx.xrc
 
+import sqldb
+
 
 class FrameChangempw(wx.Frame):
 
@@ -140,12 +142,14 @@ class FrameChangempw(wx.Frame):
 
 
     def onSubmit(self, event):
+        """Changes masterpassword in database if entered password is correct and new passwords are identical"""
         if self.textpassword.GetValue() != self.parent.masterPassword:
             self.textnowpasswordinvalid.Show()
         elif self.textNewpassword.GetValue() != self.textnewpassword2.GetValue():
             self.textnewpasswordinvalid.Show()
         else:
-            self.parent.masterPassword = self.textNewpassword.GetValue()
+            sqldb.updatePassword(self.textNewpassword.GetValue())
+            print(sqldb.getPassword())
             self.Close()
 
     def __del__(self):

@@ -1,4 +1,5 @@
 import wx
+import wx
 import wx.xrc
 import wx.grid
 
@@ -114,7 +115,7 @@ class Hauptname_frame(wx.Frame):
         self.speicher_button.Bind(wx.EVT_BUTTON, self.onSave)
         self.add_button.Bind(wx.EVT_BUTTON, self.showAddPanel)
         self.main_grid.Bind(wx.grid.EVT_GRID_LABEL_LEFT_CLICK, self.onOrder)
-        self.Bind(wx.EVT_SET_FOCUS, self.fillGrid)
+        self.Bind(wx.EVT_SET_FOCUS, self.onFocus)
 
     def clearGrid(self):
         """Empties the entire grid. Christian"""
@@ -136,7 +137,7 @@ class Hauptname_frame(wx.Frame):
                                                "%Y-%m-%d") - datetime.datetime.today()) < datetime.timedelta(
                     days=self.deadLine) and row not in self.selection:
                     self.setRowColour(row, wx.RED)
-            if datetime.datetime.strptime(self.tableContents[row][4], "%Y-%m-%d") < datetime.datetime.today():
+            if datetime.datetime.strptime(self.tableContents[row][4], "%Y-%m-%d") < datetime.datetime.today() and row not in self.selection:
                 self.setRowColour(row, wx.LIGHT_GREY)
         if len(self.tableContents) < 8:
             # Sets empty rows to readonly so rows without database equivalent can't be edited
@@ -212,6 +213,7 @@ class Hauptname_frame(wx.Frame):
         masterPasswortpanel.Show()
         masterPasswortpanel.Raise()
 
-
+    def onFocus(self, event):
+        self.fillGrid()
     def __del__(self):
         pass
