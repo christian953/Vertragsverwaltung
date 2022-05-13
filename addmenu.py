@@ -7,7 +7,7 @@ import datetime
 
 
 class AddFrame(wx.Frame):
-
+"""Creates the GUI for adding data. Ekrem"""
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(506, 359), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
