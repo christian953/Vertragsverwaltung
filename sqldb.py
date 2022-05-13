@@ -1,7 +1,6 @@
 from sqlobject import *
 import encrypt_decrypt
 import datetime
-print("asda")
 sqlhub.processConnection = connectionForURI('sqlite:Vertragswarner.db')
 
 colnames = [
@@ -30,11 +29,10 @@ def setDefaulPassword():
     password = encrypt_decrypt.encrypt("123")
     Masterpassword(password=password[0], iv=password[1])
 
-def checkTables():
-    Vertragswarner.createTable(ifNotExists=True)
-    Masterpassword.createTable(ifNotExists=True)
-    if len(list(Masterpassword.select())) == 0:
-        setDefaulPassword()
+Vertragswarner.createTable(ifNotExists=True)
+Masterpassword.createTable(ifNotExists=True)
+if len(list(Masterpassword.select())) == 0:
+    setDefaulPassword()
 
 
 def getValues(orderBy):
@@ -72,14 +70,12 @@ def update(id, values):
 
 def remove(_id):
     """Deletes row in database by ID. Christian"""
-    print(_id)
     Vertragswarner.delete(_id)
 
 
 def add(values):
     """Adds a new row to the Database. Christian"""
     passwort = encrypt_decrypt.encrypt(values[6])
-    print(values)
     Vertragswarner(kategorie=values[0], bezeichnung=values[1], start_datum=values[2], enddatum=values[3],
                    kuendigungsdatum=values[4],
                    webseite=values[5], nutzername=values[6], passwort=str(passwort[0]), iv=str(passwort[1]))

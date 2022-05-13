@@ -1,14 +1,15 @@
 import wx
 import wx.xrc
 import Hauptmenu
+import sqldb
 
 
 class MasterPasswordFrame(wx.Frame):
 
-    def __init__(self, parent, password):
+    def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(423, 130), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
-        self.masterpassword = password
+        self.masterpassword = sqldb.getPassword()
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetFont(wx.Font(11, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Arial"))
 

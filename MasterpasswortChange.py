@@ -10,7 +10,6 @@ class FrameChangempw(wx.Frame):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(600, 311), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
-        self.parent = parent
         bSizer1 = wx.BoxSizer(wx.VERTICAL)
 
         self.m_staticText1 = wx.StaticText(self, wx.ID_ANY, u"Masterpasswort", wx.Point(-1, -1), wx.DefaultSize, 0)
@@ -143,13 +142,12 @@ class FrameChangempw(wx.Frame):
 
     def onSubmit(self, event):
         """Changes masterpassword in database if entered password is correct and new passwords are identical"""
-        if self.textpassword.GetValue() != self.parent.masterPassword:
+        if self.textpassword.GetValue() != sqldb.getPassword():
             self.textnowpasswordinvalid.Show()
         elif self.textNewpassword.GetValue() != self.textnewpassword2.GetValue():
             self.textnewpasswordinvalid.Show()
         else:
             sqldb.updatePassword(self.textNewpassword.GetValue())
-            print(sqldb.getPassword())
             self.Close()
 
     def __del__(self):

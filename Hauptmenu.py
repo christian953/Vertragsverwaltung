@@ -209,7 +209,7 @@ class Hauptname_frame(wx.Frame):
 
     def showMasterPasswort(self, event):
         """Shows panel used for changing masterpassword. Christian"""
-        masterPasswortpanel = MasterpasswortChange.FrameChangempw(self)
+        masterPasswortpanel = MasterpasswortChange.FrameChangempw(None)
         masterPasswortpanel.Show()
         masterPasswortpanel.Raise()
 
