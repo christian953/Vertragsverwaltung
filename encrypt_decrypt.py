@@ -2,6 +2,7 @@ from Crypto.Cipher import AES
 
 key = b'MKMKMKMKMKMKMKMK' # hier M_key für pw (16 ziechen lang)
 def encrypt(pw):
+    """Encryption of the data. Michael"""
     data_to_encrypt = pw
 
     # String to byte object
@@ -19,7 +20,7 @@ def encrypt(pw):
 
 
 def decrypt(encrypted_pw ,iv):
-
+    """Decryption of the data. Michael"""
 
     # decrypt encrypted password
     decryptpw = AES.new(key, AES.MODE_CFB, iv=iv)
