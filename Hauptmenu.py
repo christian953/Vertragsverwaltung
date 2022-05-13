@@ -12,7 +12,7 @@ import datetime
 
 
 class Hauptname_frame(wx.Frame):
-
+    """Creates the GUI for main menu. Ekrem"""
     def __init__(self, parent, masterPassword):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(1000, 350), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)

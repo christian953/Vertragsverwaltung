@@ -3,7 +3,7 @@ import wx.xrc
 
 
 class Dialogerror(wx.Dialog):
-
+    """Creates the GUI for Error warning. Ekrem"""
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                            size=wx.Size(515, 114), style=wx.DEFAULT_DIALOG_STYLE)
