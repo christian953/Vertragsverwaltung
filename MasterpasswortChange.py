@@ -5,7 +5,7 @@ import sqldb
 
 
 class FrameChangempw(wx.Frame):
-
+"""Creates the GUI for Masterpassword Change. Ekrem"""
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Vertragsverwaltung", pos=wx.DefaultPosition,
                           size=wx.Size(600, 311), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
